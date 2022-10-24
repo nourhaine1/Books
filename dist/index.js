@@ -45,6 +45,12 @@ app.get("/books/:id", function (req, res) {
     }));
 });
 app.put("/books/:id", function (req, res) {
+    var book = bookmoddel_1["default"].findByIdAndUpdate(req.params.id, req.body, function (err) {
+        if (err)
+            res.status(500).send(err);
+        else
+            res.send(book);
+    });
 });
 app.get("/", function (req, res) {
     res.send("hello express");

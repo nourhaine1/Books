@@ -37,7 +37,12 @@ const url="mongodb://localhost:27017/biblio";
     })
     app.put("/books/:id",(req:Request,res:Response)=>{
         
+   let book=Book.findByIdAndUpdate(req.params.id, req. body, (err: any)=> {
+            if (err) res.status(500).send(err)
+            else res.send(book)
+
     })
+})
     app.get("/",(req, res)=> {
         res.send ("hello express");
     })
