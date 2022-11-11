@@ -52,9 +52,46 @@ app.put("/books/:id", function (req, res) {
             res.send(book);
     });
 });
+app.get('/booksSearch', function (req, res) {
+    var _a, _b;
+    var search = req.query.search || '';
+    var page = parseInt(((_a = req.query.page) === null || _a === void 0 ? void 0 : _a.toString()) || '1');
+    var size = parseInt(((_b = req.query.size) === null || _b === void 0 ? void 0 : _b.toString()) || '5');
+    bookmoddel_1["default"].paginate({ title: { $regex: ".*(?i)" + search + ".*" } }, { page: page, limit: size }, function (err, books) {
+        if (err)
+            res.status(500).send(err);
+        else
+            res.send(books);
+    });
+});
+app.get('/booksParPage', function (req, res) {
+    var _a, _b;
+    var page = parseInt(((_a = req.query.page) === null || _a === void 0 ? void 0 : _a.toString()) || '1');
+    var size = parseInt(((_b = req.query.size) === null || _b === void 0 ? void 0 : _b.toString()) || '5');
+    bookmoddel_1["default"].paginate({}, { page: page, limit: size }, function (err, books) {
+        if (err)
+            res.status(500).send(err);
+        else
+            res.send(books);
+    });
+});
+app["delete"]('/books/:id', function (req, res) {
+    bookmoddel_1["default"].findByIdAndDelete(req.params.id, function (err) {
+        if (err)
+            return res.status(500).send(err);
+        else
+            return res.send("book deleted");
+    });
+});
 app.get("/", function (req, res) {
     res.send("hello express");
 });
-app.listen(8085, function () {
+var PORT = process.env.PORT || 3000;
+var eurekaHelper = require('./eureka.helper');
+app.get('/', function (req, res) {
+    res.json("I am user-service");
+});
+eurekaHelper.registerWithEureka('books-service', PORT);
+app.listen(PORT, function () {
     console.log("server started");
 });
