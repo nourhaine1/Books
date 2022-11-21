@@ -43,6 +43,33 @@ const url="mongodb://localhost:27017/biblio";
 
     })
 })
+app.get('/booksSearch',(req:Request,res:Response)=>{
+    const search = req.query.search || '';
+    const page:number = parseInt(req.query.page?.toString()||'1');
+    const size:number = parseInt(req.query.size?.toString()||'5');
+
+    Book.paginate({title:{$regex:".*(?i)"+search+".*"}},{page:page,limit:size},(err:any,books:any)=>{
+        if(err) res.status(500).send(err);
+        else res.send(books);
+    });
+    
+});
+app.get('/booksParPage',(req:Request,res:Response)=>{
+    const page:number = parseInt(req.query.page?.toString()||'1');
+    const size:number = parseInt(req.query.size?.toString()||'5');
+
+    Book.paginate({},{page:page,limit:size},(err:any,books:any)=>{
+        if(err) res.status(500).send(err);
+        else res.send(books);
+    });
+
+})
+app.delete('/books/:id', (req: Request, res: Response) => { 
+    Book.findByIdAndDelete(req.params.id,(err: any) =>{
+    if(err) return res.status(500).send(err)
+     else return res.send("book deleted");
+    });
+})
     app.get("/",(req, res)=> {
         res.send ("hello express");
     })
