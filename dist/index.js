@@ -86,6 +86,12 @@ app["delete"]('/books/:id', function (req, res) {
 app.get("/", function (req, res) {
     res.send("hello express");
 });
-app.listen(8085, function () {
+var PORT = process.env.PORT || 3000;
+var eurekaHelper = require('./eureka.helper');
+app.get('/', function (req, res) {
+    res.json("I am user-service");
+});
+eurekaHelper.registerWithEureka('books-service', PORT);
+app.listen(PORT, function () {
     console.log("server started");
 });
